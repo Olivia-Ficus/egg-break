@@ -119,6 +119,9 @@ Useful settings:
 - `eggLayerBreathEnabled = false`: disables independent layer scaling that can make the egg look jittery
 - `eggVisibleScaleCompensation = 1.8`: compensates for transparent padding in the Figma PNG canvas
 - `maxDemandEggCanvasShortSide = 1.65`: allows the transparent egg canvas to exceed the screen short side so the visible egg can approach half-screen coverage
+- `demandMaxSpeed = 34`: maximum demand-state drift speed, in screen points per second
+- `demandSteeringSeconds = 9.0`: how slowly the egg turns toward a new target
+- `demandRetargetDistance = 160`: picks the next drift target early so movement does not stop at a point
 - `fps = 24`: animation frame rate
 
 ## Assets

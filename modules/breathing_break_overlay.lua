@@ -54,6 +54,7 @@ local demandScreenFrame = nil
 local demandStartCenter = nil
 local demandCenter = nil
 local demandTarget = nil
+local demandVelocity = nil
 local demandRadius = nil
 local recoveryStartAt = nil
 local recoveryStartedWallAt = nil
@@ -802,6 +803,47 @@ local function pickNewDemandTarget()
   }
 end
 
+local function updateDemandMotion(dt)
+  if not demandCenter then
+    demandCenter = { x = parkedCenter.x, y = parkedCenter.y }
+  end
+
+  if not demandVelocity then
+    demandVelocity = { x = 0, y = 0 }
+  end
+
+  if not demandTarget or distance(demandCenter, demandTarget) < (config.demandRetargetDistance or 160) then
+    demandTarget = pickNewDemandTarget()
+  end
+
+  local dx = demandTarget.x - demandCenter.x
+  local dy = demandTarget.y - demandCenter.y
+  local dist = math.sqrt(dx * dx + dy * dy)
+  if dist < 1 then
+    return
+  end
+
+  local maxSpeed = config.demandMaxSpeed or 34
+  local desired = {
+    x = dx / dist * maxSpeed,
+    y = dy / dist * maxSpeed,
+  }
+  local steering = 1 - math.exp(-dt / (config.demandSteeringSeconds or 9.0))
+  demandVelocity = {
+    x = lerp(demandVelocity.x, desired.x, steering),
+    y = lerp(demandVelocity.y, desired.y, steering),
+  }
+
+  local damping = math.pow(config.demandVelocityDamping or 0.985, dt * 60)
+  demandVelocity.x = demandVelocity.x * damping
+  demandVelocity.y = demandVelocity.y * damping
+
+  demandCenter = {
+    x = demandCenter.x + demandVelocity.x * dt,
+    y = demandCenter.y + demandVelocity.y * dt,
+  }
+end
+
 local function setState(nextState)
   if currentState ~= STATE_TIMER_PICKER and currentState ~= STATE_DRAGGING and currentState ~= STATE_PAUSED then
     previousState = currentState
@@ -825,6 +867,7 @@ local function enterParkedIdle()
   demandStartAt = nil
   demandTarget = nil
   demandCenter = nil
+  demandVelocity = nil
   demandRadius = nil
   recoveryStartAt = nil
   recoveryStartedWallAt = nil
@@ -840,6 +883,7 @@ local function enterDemandGrow(fromRecovery)
   demandStartAt = fromRecovery and (now() - (config.growToMaxSeconds or 180)) or now()
   demandStartCenter = demandCenter or { x = parkedCenter.x, y = parkedCenter.y }
   demandCenter = demandCenter or { x = parkedCenter.x, y = parkedCenter.y }
+  demandVelocity = demandVelocity or { x = 0, y = 0 }
   demandRadius = demandRadius or smallVisualSize()
   demandTarget = pickNewDemandTarget()
   countdownEndsAt = nil
@@ -854,6 +898,7 @@ local function enterRecoveryShrink()
   recoveryStartedWallAt = os.time()
   recoveryStartCenter = demandCenter and { x = demandCenter.x, y = demandCenter.y } or { x = parkedCenter.x, y = parkedCenter.y }
   recoveryStartRadius = demandRadius or maxDemandVisualSize()
+  demandVelocity = nil
   setState(STATE_RECOVERY_SHRINK)
   enterFullScreenCanvasMode()
 end
@@ -941,15 +986,7 @@ local function drawDemand(t, dt, alphaMultiplier)
   local targetRadius = maxDemandVisualSize()
   demandRadius = lerp(smallVisualSize(), targetRadius, easeOutCubic(progress))
 
-  if not demandCenter then
-    demandCenter = { x = parkedCenter.x, y = parkedCenter.y }
-  end
-  if not demandTarget or distance(demandCenter, demandTarget) < 20 then
-    demandTarget = pickNewDemandTarget()
-  end
-
-  local step = 1 - math.exp(-dt / 18)
-  demandCenter = lerpPoint(demandCenter, demandTarget, step)
+  updateDemandMotion(dt)
 
   local cx = demandCenter.x - frame.x
   local cy = demandCenter.y - frame.y
