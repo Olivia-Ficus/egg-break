@@ -1,0 +1,71 @@
+local config = {
+  enabled = true,
+
+  -- animation
+  fps = 24,
+
+  -- visual
+  anchor = "topRight",
+  marginX = 42,
+  marginY = 52,
+  canvasSize = 200,
+  smallCanvasSize = 200,
+  smallCoreRadius = 34,
+  coreColor = { white = 0.0, alpha = 0.88 },
+  middleColor = { white = 0.0, alpha = 0.18 },
+  outerColor = { white = 0.0, alpha = 0.08 },
+  dropletColor = { white = 0.0, alpha = 0.55 },
+  timerColor = { white = 0.18, alpha = 0.58 },
+  blobStrokeColor = { white = 0, alpha = 0.12 },
+  timerFontSize = 12,
+  showTimer = true,
+  visualTheme = "egg",
+
+  -- egg visual assets
+  assetDirectory = os.getenv("HOME") .. "/.hammerspoon/egg-break/assets",
+  smallEggSize = 118,
+  sauceScale = 1.0,
+  whiteScale = 1.0,
+  yolkScale = 1.0,
+  sauceOffsetX = 0,
+  sauceOffsetY = 0,
+  whiteOffsetX = 0,
+  whiteOffsetY = 0,
+  yolkOffsetX = 0,
+  yolkOffsetY = 0,
+  parkedSauceRotationSpeed = 0.15,
+  parkedWhiteRotationSpeed = -0.04,
+  countdownSauceRotationSpeed = 0.25,
+  countdownWhiteRotationSpeed = -0.06,
+  demandSauceRotationSpeed = 0.55,
+  demandWhiteRotationSpeed = -0.12,
+  recoverySauceRotationSpeed = 0.18,
+  recoveryWhiteRotationSpeed = -0.04,
+  whiteBreathAmplitude = 0.018,
+  yolkBreathAmplitude = 0.010,
+  sauceBreathAmplitude = 0.012,
+  eggLayerRegistrationConstraint = true,
+  maxSauceRotationDegrees = 3.0,
+  maxWhiteRotationDegrees = 1.1,
+  maxSauceBreathAmplitude = 0.004,
+  maxWhiteBreathAmplitude = 0.004,
+  maxYolkBreathAmplitude = 0.006,
+
+  -- behavior
+  visibleOnAllSpaces = true,
+  tryFullscreenOverlay = true,
+  requiredBreakSeconds = 600,
+  growToMaxSeconds = 180,
+  recoveryShrinkSeconds = 32,
+  maxDemandCoverage = 0.50,
+  longPressThresholdSeconds = 0.42,
+  dragStartDistancePx = 6,
+  clickMaxDistancePx = 5,
+  hitPadding = 10,
+
+  -- debug
+  debug = false,
+  debugVisualAudit = false,
+}
+
+return config

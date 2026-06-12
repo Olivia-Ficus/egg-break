@@ -1,0 +1,5 @@
+.DS_Store
+*.log
+*.tmp
+/.hammerspoon/
+ui_audit_report.md
