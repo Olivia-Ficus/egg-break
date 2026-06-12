@@ -1,6 +1,8 @@
 # egg-break
 
-egg-break is a local-only Hammerspoon break reminder. It parks a small fried-egg object on your Mac screen. Click it to start a countdown. When the countdown ends, the egg detaches from its parked position, grows into a demand layer, and stays present until you take a real break.
+When you see the egg, it is already too late.
+
+It parks a small fried egg on your screen. Click it to start a countdown. When the countdown ends, the egg detaches from its parked position, grows into a demand layer, and stays present until you take a real break.
 
 The visual system uses transparent PNG assets exported from Figma:
 
@@ -23,6 +25,15 @@ brew install --cask hammerspoon
 
 ## Install
 
+## Fast lane: yell at Codex / Claude Code
+
+Open Codex, Claude Code, or whichever digital intern you currently trust, and say:
+
+Clone https://github.com/Olivia-Ficus/egg-break.git, run the install script, then verify that ~/.hammerspoon/init.lua loads ~/.hammerspoon/egg-break/init.lua. Do not overwrite my existing Hammerspoon config.
+
+That is the “I have already stared at enough terminals today” route.
+
+## Manual install
 Clone the project:
 
 ```bash
@@ -56,6 +67,9 @@ After installing:
 2. Grant Accessibility and/or Input Monitoring permissions if macOS asks.
 3. Choose Hammerspoon menu bar -> Reload Config.
 
+If everything works, a small egg should appear on your screen.
+Congratulations. You now own a tiny accountability breakfast.
+
 ## Controls
 
 - `cmd + alt + ctrl + B`: toggle overlay visibility
@@ -76,6 +90,14 @@ In demand state:
 - Click controls are disabled.
 - The egg grows and moves slowly.
 - Recovery starts only after 10 continuous minutes with no keyboard input, mouse click, scroll, or mouse movement.
+
+The egg only shrinks back after you leave your keyboard, mouse, scroll wheel, and pointer untouched for 10 continuous minutes.
+
+Not “I opened another tab.”
+Not “I moved my mouse to check Slack.”
+A real break.
+eggie real cares about your healthy,
+say thx to eggie.
 
 ## Permissions
 
