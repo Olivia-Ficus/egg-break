@@ -45,11 +45,15 @@ local config = {
   yolkBreathAmplitude = 0.010,
   sauceBreathAmplitude = 0.012,
   eggLayerRegistrationConstraint = true,
+  eggUseUnifiedLayerFrame = true,
+  eggLayerBreathEnabled = false,
   maxSauceRotationDegrees = 3.0,
   maxWhiteRotationDegrees = 1.1,
   maxSauceBreathAmplitude = 0.004,
   maxWhiteBreathAmplitude = 0.004,
   maxYolkBreathAmplitude = 0.006,
+  eggVisibleScaleCompensation = 1.8,
+  maxDemandEggCanvasShortSide = 1.65,
 
   -- behavior
   visibleOnAllSpaces = true,

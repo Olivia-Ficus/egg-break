@@ -496,6 +496,10 @@ local function eggRegistrationConstrained()
   return config.eggLayerRegistrationConstraint ~= false
 end
 
+local function eggUsesUnifiedLayerFrame()
+  return config.eggUseUnifiedLayerFrame ~= false
+end
+
 local function constrainedBreath(t, period, phase, requestedAmplitude, maxAmplitude)
   local amplitude = math.min(requestedAmplitude or 0, maxAmplitude or requestedAmplitude or 0)
   return 1 + math.sin(t / period + phase) * amplitude
@@ -556,14 +560,35 @@ local function eggAssetFrame(key, center, visualSize, scale, breath)
   }
 end
 
+local function eggUnifiedFrame(center, visualSize)
+  local imageSize = eggAssets.sizes.sauce or eggAssets.sizes.white or eggAssets.sizes.yolk or {
+    w = eggAssets.referenceHeight or 1,
+    h = eggAssets.referenceHeight or 1,
+  }
+  local referenceHeight = eggAssets.referenceHeight or imageSize.h or 1
+  local width = visualSize * (imageSize.w / referenceHeight)
+  local height = visualSize
+  return centeredFrame(center.x, center.y, math.max(width, height)), {
+    x = center.x - width / 2,
+    y = center.y - height / 2,
+    w = width,
+    h = height,
+  }
+end
+
 local function drawEggOrganism(center, size, state, progress, t, alphaMultiplier)
   loadEggAssets(false)
   local pressure = clamp(progress or 0, 0, 1)
   local sauceSpeed, whiteSpeed = eggLayerSpeeds(state)
-  local sauceBreath = 1 + math.sin(t / 11.0 + 1.2) * (config.sauceBreathAmplitude or 0.012)
-  local whiteBreath = 1 + math.sin(t / 8.0) * (config.whiteBreathAmplitude or 0.018)
-  local yolkBreath = 1 + math.sin(t / 6.5 + 0.4) * (config.yolkBreathAmplitude or 0.010)
-  if eggRegistrationConstrained() then
+  local sauceBreath = 1
+  local whiteBreath = 1
+  local yolkBreath = 1
+  if config.eggLayerBreathEnabled then
+    sauceBreath = 1 + math.sin(t / 11.0 + 1.2) * (config.sauceBreathAmplitude or 0.012)
+    whiteBreath = 1 + math.sin(t / 8.0) * (config.whiteBreathAmplitude or 0.018)
+    yolkBreath = 1 + math.sin(t / 6.5 + 0.4) * (config.yolkBreathAmplitude or 0.010)
+  end
+  if config.eggLayerBreathEnabled and eggRegistrationConstrained() then
     sauceBreath = constrainedBreath(t, 13.0, 1.2, config.sauceBreathAmplitude or 0.012, config.maxSauceBreathAmplitude or 0.004)
     whiteBreath = constrainedBreath(t, 13.0, 0.0, config.whiteBreathAmplitude or 0.018, config.maxWhiteBreathAmplitude or 0.004)
     yolkBreath = constrainedBreath(t, 8.5, 0.4, config.yolkBreathAmplitude or 0.010, config.maxYolkBreathAmplitude or 0.006)
@@ -580,9 +605,22 @@ local function drawEggOrganism(center, size, state, progress, t, alphaMultiplier
     x = center.x + (config.yolkOffsetX or 1),
     y = center.y + (config.yolkOffsetY or 3),
   }
-  local sauceFrame = eggAssetFrame("sauce", sauceCenter, size, config.sauceScale or 1.0, sauceBreath)
-  local whiteFrame = eggAssetFrame("white", whiteCenter, size, config.whiteScale or 1.0, whiteBreath)
-  local yolkFrame = eggAssetFrame("yolk", yolkCenter, size, config.yolkScale or 1.0, yolkBreath)
+  local sauceFrame = nil
+  local whiteFrame = nil
+  local yolkFrame = nil
+  if eggUsesUnifiedLayerFrame() then
+    local _, frame = eggUnifiedFrame(center, size)
+    sauceFrame = frame
+    whiteFrame = frame
+    yolkFrame = frame
+    sauceCenter = center
+    whiteCenter = center
+    yolkCenter = center
+  else
+    sauceFrame = eggAssetFrame("sauce", sauceCenter, size, config.sauceScale or 1.0, sauceBreath)
+    whiteFrame = eggAssetFrame("white", whiteCenter, size, config.whiteScale or 1.0, whiteBreath)
+    yolkFrame = eggAssetFrame("yolk", yolkCenter, size, config.yolkScale or 1.0, yolkBreath)
+  end
   local sauceAlpha = lerp(0.82, 1.0, pressure) * alphaMultiplier
   local whiteAlpha = lerp(0.90, 1.0, pressure) * alphaMultiplier
   local yolkAlpha = lerp(0.94, 1.0, pressure) * alphaMultiplier
@@ -720,8 +758,10 @@ local function computeDemandMaxEggSize()
   local frame = demandScreenFrame or mainScreenFrame()
   local screenArea = frame.w * frame.h
   local targetArea = screenArea * (config.maxDemandCoverage or 0.50)
-  local maxSize = math.sqrt(targetArea)
-  return math.min(maxSize, math.min(frame.w, frame.h) * 0.78)
+  local compensation = config.eggVisibleScaleCompensation or 1.8
+  local maxCanvasShortSide = config.maxDemandEggCanvasShortSide or 1.65
+  local maxSize = math.sqrt(targetArea) * compensation
+  return math.min(maxSize, math.min(frame.w, frame.h) * maxCanvasShortSide)
 end
 
 local function maxDemandVisualSize()

@@ -115,6 +115,10 @@ Useful settings:
 - `recoveryShrinkSeconds = 32`: shrink-back duration
 - `maxDemandCoverage = 0.50`: demand size target
 - `eggLayerRegistrationConstraint = true`: keeps sauce, white, and yolk close to the Figma composition
+- `eggUseUnifiedLayerFrame = true`: renders all egg layers into the same registered image frame
+- `eggLayerBreathEnabled = false`: disables independent layer scaling that can make the egg look jittery
+- `eggVisibleScaleCompensation = 1.8`: compensates for transparent padding in the Figma PNG canvas
+- `maxDemandEggCanvasShortSide = 1.65`: allows the transparent egg canvas to exceed the screen short side so the visible egg can approach half-screen coverage
 - `fps = 24`: animation frame rate
 
 ## Assets
