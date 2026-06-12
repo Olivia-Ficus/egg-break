@@ -96,8 +96,9 @@ The egg only shrinks back after you leave your keyboard, mouse, scroll wheel, an
 Not “I opened another tab.”
 Not “I moved my mouse to check Slack.”
 A real break.
-eggie real cares about your healthy,
-say thx to eggie.
+
+Eggie cares about your health more than you do.
+Say thanks to Eggie.
 
 ## Permissions
 
